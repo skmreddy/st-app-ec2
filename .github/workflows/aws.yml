@@ -1,0 +1,26 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your main branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Deploy to AWS EC2
+      run: |
+        ssh -i "st-app.pem" ubuntu@ec2-3-80-246-189.compute-1.amazonaws.com 'bash -s' < deploy_script.sh
+
+    - name: Install dependencies on EC2
+      run: |
+        ssh -i "st-app.pem" ubuntu@ec2-3-80-246-189.compute-1.amazonaws.com 'sudo apt-get update && sudo apt-get install python3-pip -y && pip3 install -r /path/to/your/app/requirements.txt'
+
+    - name: Start Streamlit app on EC2
+      run: |
+        ssh -i "st-app.pem" ubuntu@ec2-3-80-246-189.compute-1.amazonaws.com 'cd st-app-ec2/app && nohup python3 -m streamlit run app.py > /dev/null 2>&1 &'
