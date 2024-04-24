@@ -8,28 +8,23 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2 on master branch push
+    name: Deploy to EC2 on main branch push
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the files
         uses: actions/checkout@v2
 
-      - name: Deploy to Server 1
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/st-app.pem
+          chmod 400 ~/.ssh/st-app.pem
 
-      - name: Executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            sudo apt update
-            sudo apt-get -y update
-           
+      - name: Deploy to Server
+        run: |
+          ssh -i ~/.ssh/st-app.pem ubuntu@${{ secrets.HOST_DNS }} 'bash -s' < deploy_aws_ec2.sh
+
+      - name: Execute remote SSH commands
+        run: |
+          ssh -i ~/.ssh/st-app.pem ubuntu@${{ secrets.HOST_DNS }} 'bash -s' < execute_remote_commands.sh
