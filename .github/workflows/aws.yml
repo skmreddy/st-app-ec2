@@ -15,7 +15,7 @@ jobs:
     
     - name: Deploy to AWS EC2
       run: |
-        ssh -i "st-app.pem" ubuntu@ec2-3-80-246-189.compute-1.amazonaws.com 'bash -s' < deploy_script.sh
+        ssh -i "st-app.pem" ubuntu@ec2-3-80-246-189.compute-1.amazonaws.com 'bash -s' < deploy_aws_ec2.sh
 
     - name: Install dependencies on EC2
       run: |
