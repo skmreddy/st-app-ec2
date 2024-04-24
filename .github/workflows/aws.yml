@@ -15,4 +15,5 @@ jobs:
     
     - name: Deploy to AWS EC2
       run: |
-        ssh -i "st-app.pem" ubuntu@ec2-3-80-246-189.compute-1.amazonaws.com
+        chmod 400 st-app.pem  # Ensure correct permissions
+        ssh -i "./st-app.pem" ubuntu@ec2-3-80-246-189.compute-1.amazonaws.com here the action code
